@@ -1,0 +1,69 @@
+# OpenWA — Second/isolated instance (VPS)
+# Purpose: run a separate OpenWA instance without touching the existing
+# openwa stack (Hermes agent). Every fixed name is namespaced with `openwa2-`.
+# Run:  docker compose -f docker-compose.second.yml --project-name openwa2 up -d
+# Dashboard/API: http://127.0.0.1:2786 (loopback only — put TLS in front to expose)
+
+services:
+  openwa-api-2:
+    image: openwa-openwa-api:latest
+    container_name: openwa-api-2
+    restart: unless-stopped
+    networks:
+      - openwa2-net
+    ports:
+      - "127.0.0.1:2786:2785"
+    environment:
+      # Core
+      NODE_ENV: production
+      PORT: "2785"
+      LOG_LEVEL: info
+      # Dashboard bundled with API
+      SERVE_DASHBOARD: "true"
+      # Database: SQLite (self-contained, no external service)
+      DATABASE_TYPE: sqlite
+      DATABASE_NAME: ./data/openwa.sqlite
+      DATABASE_SYNCHRONIZE: "false"
+      # Engine: whatsapp-web.js (lower ban risk; ~300-500MB RAM/session)
+      ENGINE_TYPE: whatsapp-web.js
+      SESSION_DATA_PATH: ./data/sessions
+      PUPPETEER_HEADLESS: "true"
+      PUPPETEER_ARGS: --no-sandbox,--disable-setuid-sandbox,--disable-dev-shm-usage,--disable-gpu
+      # Do not auto-start sessions (user starts them from dashboard)
+      AUTO_START_SESSIONS: "false"
+      STATUS_SEED_ON_READY: "false"
+      # Local storage
+      STORAGE_TYPE: local
+      STORAGE_LOCAL_PATH: ./data/media
+      # No Redis/queue for this instance
+      REDIS_ENABLED: "false"
+      QUEUE_ENABLED: "false"
+      CACHE_ENABLED: "false"
+      # Security: master key comes from .env (NOT committed)
+      API_MASTER_KEY: ${API_MASTER_KEY:-}
+      API_KEY_PEPPER: ${API_KEY_PEPPER:-}
+      # CORS default: same-origin only (dashboard is same origin)
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+      # Allow dashboard over plain HTTP (loopback/Tailscale without TLS termination)
+      CSP_UPGRADE_INSECURE_REQUESTS: ${CSP_UPGRADE_INSECURE_REQUESTS:-false}
+    volumes:
+      - openwa2-data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:2785/api/health/ready"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "com.openwa.service=api-2"
+      - "com.openwa.core=true"
+
+volumes:
+  openwa2-data:
+    name: openwa2_openwa-data
+    driver: local
+
+networks:
+  openwa2-net:
+    name: openwa2-net
+    driver: bridge
