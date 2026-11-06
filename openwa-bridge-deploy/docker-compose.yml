@@ -1,0 +1,17 @@
+services:
+  bridge:
+    build: .
+    image: openwa-bridge:latest
+    container_name: openwa-bridge
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:2787:2787"
+    env_file:
+      - .env
+    networks:
+      - openwa_default
+
+networks:
+  openwa_default:
+    external: true
+    name: openwa-deploy_default
