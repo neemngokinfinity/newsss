@@ -12,6 +12,7 @@ never the real `.env`.
 - [paperclip-deploy/](paperclip-deploy/) — Paperclip AI platform (authenticated/public mode): compose with Postgres sidecar, env template, deployment guide, deploy log.
 - [nanobot-platform/](nanobot-platform/) — Nanobot web UI (login, chat, tools, managers, deploy, tests) + backend API surface.
 - [nanobot-profile/](nanobot-profile/) — Agent profile (SOUL/USER) and platform docs.
+- [nanobot-setup/](nanobot-setup/) — Full nanobot assistant setup guide + profile bundle reference + memory template.
 
 ## What runs on the VPS
 
