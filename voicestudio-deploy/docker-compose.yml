@@ -1,0 +1,25 @@
+services:
+  omnivoice-studio:
+    image: ghcr.io/debpalash/voicestudio:stable
+    container_name: omnivoice-studio
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - OMNIVOICE_DATA_DIR=/app/omnivoice_data
+    volumes:
+      - ./data:/app/omnivoice_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3900/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
+
+  cf-voicestudio:
+    image: cloudflare/cloudflared:latest
+    container_name: cf-voicestudio
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --url http://omnivoice-studio:3900
+    depends_on:
+      omnivoice-studio:
+        condition: service_healthy
