@@ -1,0 +1,47 @@
+services:
+  floci:
+    image: floci/floci:2.4.0
+    container_name: floci
+    hostname: floci
+    restart: unless-stopped
+    environment:
+      - FLOCI_AUTH_STRING=test:test
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+      - FLOCI_INSECURE=1
+      - FLOCI_AWS_EXECUTABLE=aws
+      - FLOCI_DATA_DIR=/opt/floci/data
+      - FLOCI_HOME=/root
+      - FLOCI_LAMBDA_EXECUTOR=docker
+      - FLOCI_SERVICES=s3,dynamodb,sqs,apigateway,lambda,iam,cloudformation,sts,cloudwatch,logs,events,secretsmanager,es,opensearch,neptune,rds,elasticache,memorydb,stepfunctions,batch,ec2,ecs,route53,sns,kms,ssm,autoscaling,servicediscovery,ses,ecr,amplify,cloudfront,cognito,firehose,kinesis,lakeformation,transfer,textract,polly,transcribe,rekognition,comprehend
+    ports:
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4500:4500"
+      - "127.0.0.1:6379:6379"
+      - "127.0.0.1:6400:6400"
+      - "127.0.0.1:7001:7001"
+      - "127.0.0.1:8182:8182"
+    volumes:
+      - floci-data:/opt/floci/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    tmpfs:
+      - /tmp
+      - /opt/floci/tmp
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://127.0.0.1:4566/_localstack/health | grep -q \"s3: [a-z]*\""]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  floci-ui-probe:
+    image: floci/floci:2.4.0
+    container_name: floci-ui-probe
+    restart: no
+    depends_on:
+      - floci
+    command: ["sh", "-c", "until curl -fsS http://floci:4566/_localstack/health; do sleep 2; done"]
+
+volumes:
+  floci-data:

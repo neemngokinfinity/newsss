@@ -1,0 +1,18 @@
+#  .env, docker-compose.override.yml
+*.log
+
+# AWS inventory dumps / runtime state
+floci-deploy/data/
+floci-deploy/tunnel/
+floci-deploy/tmp/
+
+# Never commit real credentials
+**/aws-credentials.json
+**/aws-credentials*
+**/*credentials*.json
+**/.aws/
+
+# Local / OS noise
+.DS_Store
+__pycache__/
+*.pyc
