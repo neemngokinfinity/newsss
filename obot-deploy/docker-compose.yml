@@ -1,0 +1,17 @@
+services:
+  obot:
+    image: ghcr.io/obot-platform/obot:latest
+    container_name: obot
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8100:8080"
+    volumes:
+      - obot-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    env_file:
+      - .env
+    environment:
+      - OBOT_SERVER_PORT=8080
+
+volumes:
+  obot-data:
