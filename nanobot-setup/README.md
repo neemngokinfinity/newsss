@@ -9,6 +9,7 @@ memory conventions, skills, scheduling, and a full setup guide.
 | Path | What it is |
 |---|---|---|
 | [SETUP-GUIDE.md](SETUP-GUIDE.md) | Step-by-step deployment & configuration guide (the main document) |
+| [MASTER-SETUP-PROMPT.md](MASTER-SETUP-PROMPT.md) | **Copy-paste master prompt** — paste into a fresh server's chat to bootstrap the whole assistant |
 | [PROFILE-BUNDLE.md](PROFILE-BUNDLE.md) | Identity/persona files explained with templates |
 | [MEMORY.example.md](MEMORY.example.md) | Sanitized example of the long-term memory file format |
 
@@ -29,4 +30,6 @@ cp -r nanobot-profile/{SOUL.md,USER.md,AGENTS.md,HEARTBEAT.md,prompts} \
      ~/.nanobot/workspace/
 ```
 
-See [SETUP-GUIDE.md](SETUP-GUIDE.md) for the full path from zero.
+See [SETUP-GUIDE.md](SETUP-GUIDE.md) for the full path from zero, or
+[MASTER-SETUP-PROMPT.md](MASTER-SETUP-PROMPT.md) to let the agent do it all
+from a single pasted prompt.
