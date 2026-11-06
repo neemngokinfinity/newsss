@@ -1,0 +1,14 @@
+# secrets
+.env
+secrets.env
+*.pem
+*.key
+
+# runtime data & logs
+data/
+tunnel/
+*.log
+
+# node	node_modules/
+dist/
+build/
